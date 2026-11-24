@@ -1,0 +1,8 @@
+﻿CLAUDE.md
+DOCUMENTATION.md
+TODO.md
+__pycache__/
+*.log
+captures/
+lpicam_settings.json
+
