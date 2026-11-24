@@ -46,10 +46,11 @@ class SequenceRecorder:
             self.dropped += 1
 
     def start(self, folder, name, seconds, count, width, height, color_id,
-              observer="", instrument="", telescope=""):
+              observer="", instrument="", telescope="", planes=1):
         os.makedirs(folder, exist_ok=True)
-        while not self._q.empty():
-            self._q.get_nowait()
+        # about 200 MB of queued frames, whatever the frame size
+        self._q = queue.Queue(
+            maxsize=max(20, int(200e6 // (width * height * planes))))
         self._stop.clear()
         self.state, self.message = "recording", ""
         self.seq, self.total = 0, count
@@ -60,7 +61,7 @@ class SequenceRecorder:
         self._thread = threading.Thread(
             target=self._run,
             args=(folder, safe_name(name), seconds, count, width, height,
-                  color_id, observer, instrument, telescope),
+                  color_id, observer, instrument, telescope, planes),
             daemon=True)
         self._thread.start()
 
@@ -90,7 +91,7 @@ class SequenceRecorder:
                     return None
 
     def _run(self, folder, name, seconds, count, width, height, color_id,
-             observer, instrument, telescope):
+             observer, instrument, telescope, planes):
         digits = max(2, len(str(count)))
         stamp = time.strftime("%Y%m%d_%H%M%S")
         carry = None
@@ -100,7 +101,7 @@ class SequenceRecorder:
                 path = os.path.join(
                     folder, "%s_%s_%0*d.ser" % (name, stamp, digits, seq))
                 writer = SerWriter(path, width, height, color_id,
-                                   observer, instrument, telescope)
+                                   observer, instrument, telescope, planes)
                 self.files.append(path)
                 t_start = None
                 try:

@@ -24,10 +24,10 @@ def _text(s):
 
 class SerWriter:
     def __init__(self, path, width, height, color_id,
-                 observer="", instrument="", telescope=""):
+                 observer="", instrument="", telescope="", planes=1):
         self._f = open(path, "wb")
         self._stamps = []
-        self.frame_bytes = width * height
+        self.frame_bytes = width * height * planes
         now = time.time()
         offset = datetime.datetime.now().astimezone().utcoffset().total_seconds()
         self._f.write(HEADER.pack(
