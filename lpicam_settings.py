@@ -10,9 +10,16 @@ DEFAULTS = {
     "exposure": 40,     # sensor line exposure 0..8191
     "gain": 20,         # 0..63
     "color": True,
-    "bayer": "RG",      # RG, BG, GR, GB (OpenCV demosaic name)
+    "bayer": "BGGR",    # true sensor layout: RGGB, GRBG, GBRG, BGGR
     "ontop": False,
     "classic": False,   # normal OS window frame instead of borderless
+    "rec_dir": os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "captures"),
+    "rec_name": "lpi",
+    "rec_seconds": 20,
+    "rec_count": 1,
+    "observer": "",     # written into the SER header
+    "telescope": "",    # written into the SER header
 }
 
 

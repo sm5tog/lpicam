@@ -24,6 +24,7 @@ class CaptureWorker:
         self.lum = (0, 0)         # bridge brightness sums (inside, outside)
         self.error = None
         self.running = False
+        self.frame_sink = None    # optional callable(arr), must not block
 
     def start(self, mode, exposure, gain):
         self.stop()
@@ -68,6 +69,9 @@ class CaptureWorker:
                         self.latest = arr
                         self.lum = (fr.lum_inside, fr.lum_outside)
                         self.counter += 1
+                    sink = self.frame_sink
+                    if sink is not None:
+                        sink(arr)
 
             def should_stop():
                 if self._stop.is_set():
